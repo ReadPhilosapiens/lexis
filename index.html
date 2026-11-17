@@ -156,6 +156,31 @@ html[data-style=clay] .chip.on{box-shadow:inset 3px 3px 6px #c1c8d8,inset -3px -
 html[data-style=clay] .item{border-bottom:1px solid rgba(46,54,80,.08)}
 html[data-style=clay] nav{border-top:0;box-shadow:0 -6px 14px rgba(255,255,255,.7)}
 html[data-style=clay] .sw button{border:0}
+
+/* ---------- 7. MINIMAL: whitespace, hairlines that draw themselves, a slow fade ---------- */
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+html[data-style=minimal]{--bg:#fafaf8;--card:transparent;--line:#e3e3df;--ink:#151515;--mute:#85857f;--gold:#151515;--soc:#2c6e5f;--sor:#9a4a62;--cri:#7a6020;--err:#b3261e;--field:transparent;--onacc:#fafaf8;--def:#2b2b2b;--r:0px;--serif:"Helvetica Neue",Helvetica,Arial,sans-serif;--sans:"Helvetica Neue",Helvetica,Arial,sans-serif;--enter:fade;--dur:.8s;--ease:ease}
+html[data-style=minimal] .card{border:0;background:none;padding:20px 0 14px;position:relative;margin-bottom:6px}
+html[data-style=minimal] .card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:#151515;opacity:.22;transform-origin:left;animation:draw 1s ease both}
+html[data-style=minimal] .stat>div{background:none;border:0;border-top:1px solid #151515;border-radius:0;text-align:left;padding:10px 0}
+html[data-style=minimal] h1{font-weight:300;font-size:36px;letter-spacing:-.03em}
+html[data-style=minimal] .term{font-weight:300;font-size:30px;letter-spacing:-.02em}
+html[data-style=minimal] .tag{letter-spacing:.2em;font-weight:500}
+html[data-style=minimal] .use{border-left:0;padding-left:0;font-style:italic}
+html[data-style=minimal] .btn{background:none;color:var(--ink);border:0;border-bottom:1px solid #151515;border-radius:0;padding:12px 0;text-align:left;font-weight:500;letter-spacing:.02em}
+html[data-style=minimal] .btn:not(.ghost):not(.danger)::after{content:"  \2192";display:inline-block;transition:transform .25s}
+html[data-style=minimal] .btn:not(.ghost):not(.danger):active::after{transform:translateX(8px)}
+html[data-style=minimal] .btn:active{transform:none;opacity:.45}
+html[data-style=minimal] .btn.ghost{color:var(--mute);border-bottom-color:var(--line)}
+html[data-style=minimal] .btn.danger{color:var(--err);border-bottom-color:var(--err)}
+html[data-style=minimal] textarea,html[data-style=minimal] input{border:0;border-bottom:1px solid #151515;border-radius:0;padding:12px 0}
+html[data-style=minimal] .chip{border:0;border-bottom:1px solid transparent;border-radius:0;padding:8px 2px;margin-right:10px}
+html[data-style=minimal] .chip.on{border-bottom-color:#151515;color:var(--ink)}
+html[data-style=minimal] nav{border-top:1px solid var(--line)}
+html[data-style=minimal] nav button{font-size:11px;letter-spacing:.16em}
+html[data-style=minimal] nav button[aria-current=page]{color:#151515;box-shadow:inset 0 2px 0 #151515}
+html[data-style=minimal] .sw button{border-radius:2px;border:1px solid var(--line)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -240,13 +265,14 @@ var W=[
 ];
 var BOXGAP=[0,1,2,4,8]; // days per Leitner box
 var STY={ink:["Ink","Calm dark, gentle rise","#0f0e0c","#191714","#d9b26f"],
+ minimal:["Minimal","Whitespace, hairlines, a quiet fade","#fafaf8","#ffffff","#e2e2dd"],
  glass:["Glass","Frosted panes bloom over a drifting aurora","#0b1020","#4a5de0","#c13fb4"],
  paper:["Paper","Sheets laid on a ruled desk, pages turn","#ece3cf","#fbf6ea","#8f4a27"],
  brutal:["Brutalist","Hard edges, slams in, presses flat","#f3efe2","#ffd400","#111111"],
  funky:["Funky","Jelly pops and wobbling words","#2b0f4f","#ff4fa3","#3ff0b4"],
  terminal:["Terminal","Phosphor green, lines type in","#030804","#06120a","#7dff9a"],
  clay:["Clay","Soft puffy shapes that press in","#e3e8f1","#e3e8f1","#5b6cff"]};
-var STYLES=Object.keys(STY),LIGHT={paper:1,brutal:1,clay:1};
+var STYLES=Object.keys(STY),LIGHT={minimal:1,paper:1,brutal:1,clay:1};
 function applyStyle(){var k=STY[S.style]?S.style:"ink",r=document.documentElement;
  r.setAttribute("data-style",k);if(LIGHT[k])r.setAttribute("data-light","");else r.removeAttribute("data-light");
  var m=document.querySelector('meta[name=theme-color]');if(m)m.setAttribute("content",STY[k][2])}
@@ -449,7 +475,7 @@ function vLog(){
   h("div",{class:"stat"},h("div",null,h("b",null,streak()),h("span",null,"Streak")),h("div",null,h("b",null,S.sent.length),h("span",null,"Sentences")),h("div",null,h("b",null,solid),h("span",null,"Solid"))),
   h("div",{class:"stat"},h("div",null,h("b",null,S.freezes),h("span",null,"Freezes")),h("div",null,h("b",null,S.log.length),h("span",null,"Reviews")),h("div",null,h("b",null,dueList().length),h("span",null,"Due")))];
 var sw=STYLES.map(function(k){var d=STY[k];
-  return h("button",{type:"button","aria-pressed":String(S.style===k),style:"background:linear-gradient(135deg,"+d[3]+","+d[4]+");"+(k==="paper"||k==="clay"||k==="brutal"?"color:#111;":""),on:{click:function(){S.style=k;save();applyStyle();render()}}},d[0],h("small",null,d[1]))});
+  return h("button",{type:"button","aria-pressed":String(S.style===k),style:"background:linear-gradient(135deg,"+d[3]+","+d[4]+");"+(k==="paper"||k==="clay"||k==="brutal"||k==="minimal"?"color:#111;":""),on:{click:function(){S.style=k;save();applyStyle();render()}}},d[0],h("small",null,d[1]))});
  nodes.push(h("div",{class:"card"},h("b",{class:"serif"},"Style"),h("div",{class:"small"},"Changes look and motion only. Your data stays."),h("div",{class:"sw"},sw)));
  nodes.push(h("div",{class:"card"},h("b",{class:"serif"},"Backup"),
   h("div",{class:"small"},(S.lastBackup?"Last backup: "+ago(S.lastBackup)+". ":"No backup yet. ")+(S.persisted===true?"Storage is protected.":standalone()?"Storage is not guaranteed, so back up often.":"Open from the Home Screen to protect storage.")),
