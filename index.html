@@ -2,24 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Lexis">
 <meta name="theme-color" content="#0f0e0c">
 <title>Lexis</title>
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%230f0e0c'/%3E%3Ctext x='90' y='122' font-size='96' text-anchor='middle' fill='%23d9b26f' font-family='Georgia,serif' font-style='italic'%3EL%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <style>
-:root{--bg:#0f0e0c;--card:#191714;--line:#2a2621;--ink:#ece6da;--mute:#8f887b;--gold:#d9b26f;--soc:#7fb0a0;--sor:#c98f9a;--cri:#d9b26f;--r:16px}
+:root{--bg:#0f0e0c;--card:#191714;--line:#2a2621;--ink:#ece6da;--mute:#8f887b;--gold:#d9b26f;--soc:#7fb0a0;--sor:#c98f9a;--cri:#d9b26f;--err:#e39a9a;--r:16px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;font-size:16px;line-height:1.45}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,"SF Pro Text",system-ui,sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .serif{font-family:Georgia,"Iowan Old Style",serif}
 #app{max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column}
-main{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 18px) 18px 24px;-webkit-overflow-scrolling:touch}
+main{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 18px) max(18px,env(safe-area-inset-right)) 24px max(18px,env(safe-area-inset-left));-webkit-overflow-scrolling:touch}
 nav{display:flex;border-top:1px solid var(--line);background:var(--bg);padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;background:none;border:0;color:var(--mute);padding:12px 0 10px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-nav button.on{color:var(--gold)}
+nav button{flex:1;min-height:52px;background:none;border:0;color:var(--mute);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav button[aria-current=page]{color:var(--gold)}
 h1{font-family:Georgia,serif;font-weight:400;font-size:30px;margin:0 0 2px}
 h2{font-family:Georgia,serif;font-weight:400;font-size:22px;margin:22px 0 8px}
 .sub{color:var(--mute);font-size:14px;margin:0 0 18px}
@@ -29,15 +33,15 @@ h2{font-family:Georgia,serif;font-weight:400;font-size:22px;margin:22px 0 8px}
 .term{font-family:Georgia,serif;font-size:26px;margin:4px 0 6px}
 .def{color:#cfc8ba}
 .use{color:var(--mute);font-size:14px;margin-top:10px;border-left:2px solid var(--line);padding-left:10px}
-textarea,input{width:100%;background:#12110f;border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px;font-size:16px;font-family:inherit;margin-top:10px;resize:none}
-textarea:focus,input:focus{outline:1px solid var(--gold)}
-.btn{background:var(--gold);color:#17130b;border:0;border-radius:12px;padding:12px 16px;font-weight:600;font-size:15px;margin-top:10px}
+textarea,input[type=text],input[type=search],input:not([type]){width:100%;min-height:48px;background:#12110f;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:16px;margin-top:10px;resize:none}
+.btn{display:block;width:100%;min-height:48px;background:var(--gold);color:#17130b;border:0;border-radius:12px;padding:12px 16px;font-weight:600;font-size:15px;margin-top:10px}
 .btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:none;color:var(--err);border:1px solid #5a3535}
 .row{display:flex;gap:8px}.row>*{flex:1}
 .chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}
-.chip{flex:none;border:1px solid var(--line);background:none;color:var(--mute);border-radius:99px;padding:7px 14px;font-size:14px}
+.chip{flex:none;min-height:44px;border:1px solid var(--line);background:none;color:var(--mute);border-radius:99px;padding:8px 16px;font-size:14px}
 .chip.on{color:var(--ink);border-color:var(--gold)}
-.stat{display:flex;gap:10px}.stat>div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;text-align:center}
+.stat{display:flex;gap:10px;margin-bottom:10px}.stat>div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;text-align:center}
 .stat b{display:block;font-family:Georgia,serif;font-size:26px;font-weight:400}
 .stat span{font-size:11px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
 .item{padding:12px 0;border-bottom:1px solid var(--line)}
@@ -45,14 +49,16 @@ textarea:focus,input:focus{outline:1px solid var(--gold)}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--line)}
 .box{display:inline-block;min-width:18px;text-align:center;font-size:11px;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:1px 5px;margin-left:6px}
 .done{color:var(--soc);font-size:14px;margin-top:8px}
+.err{color:var(--err)}
 .flip{min-height:230px;display:flex;flex-direction:column;justify-content:center;text-align:center}
 .small{font-size:13px;color:var(--mute)}
-a{color:var(--gold)}
+.zone{margin-top:28px;padding-top:18px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <div id="app"><main id="v"></main>
-<nav id="nav"></nav></div>
+<nav id="nav" aria-label="Sections"></nav></div>
 <script>
 /* ---------- DATA: original glosses, written for this app ---------- */
 var SH={
@@ -63,6 +69,7 @@ var SH={
  cri:{name:"Critical Thinking",tag:"t-cri",color:"#d9b26f",goal:"Catches flawed reasoning in your trades, your content and other people's claims.",
   prompt:"Catch it once in your own thinking today: a trade, a claim, a reel."}
 };
+var SHELVES=["soc","sor","cri"];
 var W=[
 /* sociology */
 ["soc","Social stratification","How a society ranks people into layers by wealth, power or status, and how those layers tend to be inherited."],
@@ -129,96 +136,224 @@ var W=[
 ["cri","Outcome bias","Judging a decision by how it turned out rather than how it was made."]
 ];
 var BOXGAP=[0,1,2,4,8]; // days per Leitner box
-/* ---------- STATE ---------- */
-var S=load();
-function load(){try{var s=JSON.parse(localStorage.getItem("lexis")||"null");if(s)return s}catch(e){}
- return {prog:{},sent:[],custom:[],days:{},ver:1}}
-function save(){try{localStorage.setItem("lexis",JSON.stringify(S))}catch(e){}}
-function all(){return W.map(function(w,i){return {id:"w"+i,s:w[0],t:w[1],d:w[2]}}).concat(S.custom)}
+var KEY="lexis",SNAP="lexis_snap";
+/* ---------- helpers ---------- */
+function dayN(){var d=new Date();return Math.floor((d.getTime()-d.getTimezoneOffset()*6e4)/864e5)}
 function today(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
-function dayN(){return Math.floor(Date.now()/864e5)}
+function ago(ts){var d=Math.floor((Date.now()-ts)/864e5);return d<1?"today":d===1?"yesterday":d+" days ago"}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function norm(x){return String(x).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"")}
+function standalone(){return navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)}
+/* DOM builder: text always goes in as text nodes, never as HTML */
+function add(e,c){if(c==null||c===false)return;if(Array.isArray(c))c.forEach(function(x){add(e,x)});else e.appendChild(c.nodeType?c:document.createTextNode(String(c)))}
+function h(tag,p){var e=document.createElement(tag);p=p||{};
+ for(var k in p){var v=p[k];if(v==null||v===false)continue;
+  if(k==="class")e.className=v;
+  else if(k==="on"){for(var ev in v)e.addEventListener(ev,v[ev])}
+  else if(k==="value")e.value=v;
+  else if(k==="style")e.style.cssText=v;
+  else e.setAttribute(k,v===true?"":v)}
+ for(var i=2;i<arguments.length;i++)add(e,arguments[i]);return e}
+function btn(label,cls,fn){return h("button",{type:"button","class":"btn "+(cls||""),on:{click:fn}},label)}
+/* ---------- storage (one wrapper, so a later IndexedDB move is a one-place change) ---------- */
+var Store={read:function(k){try{return JSON.parse(localStorage.getItem(k)||"null")}catch(e){return null}},
+ write:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}},
+ drop:function(k){try{localStorage.removeItem(k)}catch(e){}}};
+function blank(){return {schema:2,prog:{},sent:[],custom:[],days:{},daily:{},log:[],freezes:2,frozen:{},goal:5,mode:"flip",lastBackup:0,persisted:null,rolled:0}}
+function fill(s){var b=blank();for(var k in b)if(s[k]===undefined)s[k]=b[k];s.schema=2;return s}
+var S=fill(Store.read(KEY)||{});
+function save(){Store.write(KEY,S)}
+function all(){return W.map(function(w,i){return {id:"w"+i,s:w[0],t:w[1],d:w[2]}}).concat(S.custom)}
 function pr(id){return S.prog[id]||(S.prog[id]={box:0,due:0,seen:0})}
-function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-/* daily pick: first unseen word of each shelf in order, stays fixed for the day */
+function dueList(){var d=dayN();return all().filter(function(w){var p=S.prog[w.id];return p&&p.box>0&&p.due<=d})}
+/* daily pick: least-seen word per shelf, fixed for the day */
 function daily(s){
- var k="pick_"+s,t=today();S.daily=S.daily||{};
- if(S.daily[k]&&S.daily[k].t===t)return all().filter(function(w){return w.id===S.daily[k].id})[0];
- var l=all().filter(function(w){return w.s===s});
+ var k="pick_"+s,t=today(),all_=all();
+ if(S.daily[k]&&S.daily[k].t===t){var f=all_.filter(function(w){return w.id===S.daily[k].id})[0];if(f)return f}
+ var l=all_.filter(function(w){return w.s===s});
  l.sort(function(a,b){return pr(a.id).seen-pr(b.id).seen});
  var w=l[0];S.daily[k]={t:t,id:w.id};pr(w.id).seen++;save();return w}
-function streak(){var d=dayN(),n=0;
- if(!S.days[d])d--;
- while(S.days[d]){n++;d--}return n}
-function mark(){S.days[dayN()]=1;save()}
-/* ---------- VIEWS ---------- */
-var tab="today",filter="all",q="",drill=null;
-var V=document.getElementById("v");
-function nav(){var T=[["today","Today"],["shelves","Shelves"],["drill","Drill"],["log","Log"]];
- document.getElementById("nav").innerHTML=T.map(function(t){return '<button class="'+(tab===t[0]?"on":"")+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join("")}
-function go(t){tab=t;drill=null;render()}
-function render(){nav();V.scrollTop=0;({today:vToday,shelves:vShelves,drill:vDrill,log:vLog})[tab]()}
+/* streak with forgiving freezes */
+function active(d){return S.days[d]||S.frozen[d]}
+function streak(){var d=dayN(),n=0;if(!active(d))d--;while(active(d)){n++;d--}return n}
+function rollover(){var t=dayN();if(S.rolled===t)return;S.rolled=t;
+ var last=0,k;for(k in S.days)if(+k>last)last=+k;for(k in S.frozen)if(+k>last)last=+k;
+ if(last&&t-last>1){var miss=t-last-1;if(miss<=S.freezes){S.freezes-=miss;for(var i=1;i<=miss;i++)S.frozen[last+i]=1}}
+ save()}
+function mark(){var t=dayN();if(S.days[t])return;S.days[t]=1;if(streak()%7===0&&S.freezes<2)S.freezes++;save()}
+function protect(){if(!standalone()||!navigator.storage||!navigator.storage.persist)return;
+ navigator.storage.persist().then(function(ok){S.persisted=!!ok;save()}).catch(function(){})}
+function needBackup(){if(!(S.sent.length+S.log.length>0))return false;
+ return S.lastBackup===0?(S.sent.length>=3||S.log.length>=10):(Date.now()-S.lastBackup)/864e5>=7}
+/* ---------- import / export ---------- */
+function validate(raw){
+ var d=raw&&raw.app==="lexis"?raw.data:(raw&&raw.prog?raw:null);
+ if(!d||typeof d!=="object")throw new Error("This file isn't a Lexis backup. Nothing was changed.");
+ var out=blank(),idRe=/^[wc]\d{1,15}$/,cRe=/^c\d{1,15}$/;
+ function str(x,max){return typeof x==="string"?x.slice(0,max):""}
+ function int(x,lo,hi,def){x=Math.floor(Number(x));return isFinite(x)&&x>=lo&&x<=hi?x:def}
+ function list(x,max){return Array.isArray(x)?x.slice(0,max):[]}
+ var pg=d.prog&&typeof d.prog==="object"?d.prog:{};
+ Object.keys(pg).slice(0,3000).forEach(function(k){if(!idRe.test(k))return;var p=pg[k]||{};
+  out.prog[k]={box:int(p.box,0,4,0),due:int(p.due,0,1e6,0),seen:int(p.seen,0,1e5,0)}});
+ list(d.custom,1000).forEach(function(c){if(!c||!cRe.test(c.id)||SHELVES.indexOf(c.s)<0)return;
+  var t=str(c.t,80).trim(),m=str(c.d,400).trim();if(t&&m)out.custom.push({id:c.id,s:c.s,t:t,d:m,mine:1})});
+ list(d.sent,5000).forEach(function(x){if(!x||!idRe.test(x.id)||SHELVES.indexOf(x.s)<0)return;
+  var t=str(x.text,500).trim();if(t)out.sent.push({id:x.id,s:x.s,text:t,day:str(x.day,12),n:int(x.n,0,9e15,0)})});
+ ["days","frozen"].forEach(function(f){var o=d[f]&&typeof d[f]==="object"?d[f]:{};
+  Object.keys(o).slice(0,4000).forEach(function(k){if(/^\d{1,6}$/.test(k))out[f][k]=1})});
+ list(d.log,5000).forEach(function(r){if(!r||!idRe.test(r.id))return;
+  out.log.push({id:r.id,t:int(r.t,0,9e15,0),g:r.g?1:0,m:r.m==="type"?"type":"flip"})});
+ out.freezes=int(d.freezes,0,2,2);out.goal=int(d.goal,1,50,5);out.mode=d.mode==="type"?"type":"flip";
+ if(!Object.keys(out.prog).length&&!out.sent.length&&!out.custom.length)throw new Error("This backup is empty. Nothing was changed.");
+ return out}
+function merge(a,b){var o=JSON.parse(JSON.stringify(a)),k;
+ for(k in b.prog){var x=o.prog[k],y=b.prog[k];if(!x||y.box>x.box||(y.box===x.box&&y.seen>x.seen))o.prog[k]=y}
+ var seen={};o.sent.forEach(function(s){seen[s.id+"|"+s.n]=1});b.sent.forEach(function(s){if(!seen[s.id+"|"+s.n])o.sent.push(s)});
+ var ids={};o.custom.forEach(function(c){ids[c.id]=1});b.custom.forEach(function(c){if(!ids[c.id])o.custom.push(c)});
+ for(k in b.days)o.days[k]=1;for(k in b.frozen)o.frozen[k]=1;
+ var ls={};o.log.forEach(function(r){ls[r.id+"|"+r.t]=1});b.log.forEach(function(r){if(!ls[r.id+"|"+r.t])o.log.push(r)});
+ o.log.sort(function(p,q){return p.t-q.t});o.log=o.log.slice(-5000);return o}
+function exportData(){
+ var payload={app:"lexis",schema:2,exportedAt:new Date().toISOString(),data:S};
+ var text=JSON.stringify(payload,null,1),name="lexis-backup-"+today().replace(/-/g,"")+".json",file=null;
+ try{file=new File([text],name,{type:"application/json"})}catch(e){}
+ function done(){S.lastBackup=Date.now();save();render()}
+ if(file&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:"Lexis backup"}).then(done).catch(function(){});return}
+ var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"application/json"}));a.download=name;
+ document.body.appendChild(a);a.click();a.remove();done()}
+var pending=null,pendingMeta="",impErr="";
+function readFile(f){if(!f)return;
+ if(f.size>5e6){pending=null;impErr="That file is too large to be a Lexis backup. Nothing was changed.";render();return}
+ var r=new FileReader();
+ r.onload=function(){try{var raw=JSON.parse(r.result);pending=validate(raw);pendingMeta=raw&&typeof raw.exportedAt==="string"?raw.exportedAt.slice(0,10):"unknown date";impErr=""}
+  catch(e){pending=null;impErr=e instanceof SyntaxError?"This file isn't valid JSON. Nothing was changed.":e.message}render()};
+ r.onerror=function(){pending=null;impErr="Could not read that file. Nothing was changed.";render()};
+ r.readAsText(f)}
+function applyImport(mode){Store.write(SNAP,S);var res=mode==="merge"?merge(S,pending):pending;
+ res.lastBackup=S.lastBackup;res.persisted=S.persisted;S=fill(res);pending=null;impErr="";save();render()}
+function undoImport(){var s=Store.read(SNAP);if(!s)return;S=fill(s);save();Store.drop(SNAP);render()}
+/* ---------- views ---------- */
+var tab="today",filter="all",q="",drill=null,drillMsg="",addShelf="soc";
+var V=document.getElementById("v"),NAV=document.getElementById("nav");
+var TABS=[["today","Today"],["shelves","Shelves"],["drill","Drill"],["log","Log"]];
+TABS.forEach(function(t){NAV.appendChild(h("button",{type:"button","data-t":t[0],on:{click:function(){go(t[0])}}},t[1]))});
+function go(t){tab=t;drill=null;drillMsg="";render()}
+function mount(nodes){V.textContent="";add(V,nodes);V.scrollTop=0}
+function render(){[].forEach.call(NAV.children,function(b){if(b.getAttribute("data-t")===tab)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
+ ({today:vToday,shelves:vShelves,drill:vDrill,log:vLog})[tab]()}
+function note(title,text){return h("div",{class:"card"},h("b",{class:"serif"},title),h("div",{class:"small"},text))}
 function vToday(){
- var h='<h1>Lexis</h1><p class="sub">One word per shelf. Use each in a sentence. That is the whole habit.</p>';
+ var nodes=[h("h1",null,"Lexis"),h("p",{class:"sub"},"One word per shelf. Use each in a sentence. That is the whole habit.")];
+ if(/iPhone|iPad/.test(navigator.userAgent)&&!standalone())nodes.push(note("Add Lexis to your Home Screen first","Tap Share, then Add to Home Screen. Progress saved in this Safari tab will not carry over to the installed app."));
+ if(needBackup())nodes.push(h("div",{class:"card"},h("b",{class:"serif"},"Back up your progress"),h("div",{class:"small"},S.lastBackup?"Last backup was "+ago(S.lastBackup)+".":"You have not backed up yet."),btn("Export backup","",exportData)));
  var done=0;
- ["soc","sor","cri"].forEach(function(s){
+ SHELVES.forEach(function(s){
   var w=daily(s),got=S.sent.filter(function(x){return x.id===w.id&&x.day===today()})[0];if(got)done++;
-  h+='<div class="card"><div class="tag '+SH[s].tag+'">'+SH[s].name+'</div><div class="term">'+esc(w.t)+'</div><div class="def">'+esc(w.d)+'</div><div class="use">'+SH[s].prompt+'</div>'+
-  (got?'<div class="done">Used: <i>'+esc(got.text)+'</i></div>':'<textarea id="ta_'+s+'" rows="2" placeholder="Write your own sentence"></textarea><button class="btn" onclick="useIt(\''+s+'\',\''+w.id+'\')">Save sentence</button>')+'</div>'});
- if(done===3){mark();h+='<div class="card"><b class="serif">Done for today.</b><div class="small">Streak: '+streak()+' day'+(streak()==1?'':'s')+'. Next step: run one Drill round.</div></div>'}
- V.innerHTML=h}
-function useIt(s,id){var t=document.getElementById("ta_"+s).value.trim();if(t.split(/\s+/).length<4){alert("Write a full sentence, at least 4 words.");return}
- S.sent.push({id:id,s:s,text:t,day:today(),n:Date.now()});var p=pr(id);if(p.box<1)p.box=1;p.due=dayN()+BOXGAP[p.box];save();render()}
+  var ta=h("textarea",{rows:2,placeholder:"Write your own sentence","aria-label":"Your sentence using "+w.t,maxlength:500});
+  nodes.push(h("div",{class:"card"},
+   h("div",{class:"tag "+SH[s].tag},SH[s].name),h("div",{class:"term"},w.t),h("div",{class:"def"},w.d),h("div",{class:"use"},SH[s].prompt),
+   got?h("div",{class:"done"},"Used: ",h("i",null,got.text)):[ta,btn("Save sentence","",function(){useIt(s,w.id,ta.value)})]))});
+ nodes.push(h("div",{class:"card"},h("b",{class:"serif",style:"font-size:20px"},dueList().length+" due"),
+  h("div",{class:"small"},"A short session keeps your streak alive: "+S.goal+" cards."),btn("Quick "+S.goal,"ghost",function(){startDrill("quick")})));
+ if(done===3){mark();nodes.push(h("div",{class:"card"},h("b",{class:"serif"},"Done for today."),h("div",{class:"small"},"Streak: "+streak()+" day"+(streak()==1?"":"s")+". Next step: run one Drill round.")))}
+ mount(nodes)}
+function useIt(s,id,text){var t=String(text).trim();
+ if(t.split(/\s+/).length<4){alert("Write a full sentence, at least 4 words.");return}
+ S.sent.push({id:id,s:s,text:t.slice(0,500),day:today(),n:Date.now()});
+ var p=pr(id);if(p.box<1)p.box=1;p.due=dayN()+BOXGAP[p.box];save();render()}
+function fillList(box){
+ var l=all().filter(function(w){return(filter==="all"||w.s===filter)&&(w.t+" "+w.d).toLowerCase().indexOf(q.toLowerCase())>-1});
+ box.textContent="";
+ if(!l.length){box.appendChild(h("div",{class:"small"},"Nothing found."));return}
+ l.forEach(function(w){var p=S.prog[w.id];
+  box.appendChild(h("div",{class:"item"},h("span",{class:"dot",style:"background:"+SH[w.s].color}),h("b",{class:"serif"},w.t),
+   p&&p.box?h("span",{class:"box"},"box "+p.box):null,h("div",{class:"def small",style:"margin-top:2px"},w.d)))})}
 function vShelves(){
- var h='<h1>Shelves</h1><p class="sub">'+all().length+' entries. Add your own at the bottom.</p><div class="chips">';
- [["all","All"],["soc","Sociology"],["sor","Sorrows"],["cri","Thinking"]].forEach(function(c){h+='<button class="chip '+(filter===c[0]?"on":"")+'" onclick="filter=\''+c[0]+'\';vShelves()">'+c[1]+'</button>'});
- h+='</div>';
- if(filter!=="all")h+='<p class="sub">'+SH[filter].goal+'</p>';
- h+='<input id="q" placeholder="Search" value="'+esc(q)+'" oninput="q=this.value;list()"><div id="L" class="card" style="margin-top:12px"></div>';
- h+='<h2>Add your own</h2><div class="card"><div class="chips" id="addsel">'+["soc","sor","cri"].map(function(s,i){return '<button class="chip '+(i?'':'on')+'" data-s="'+s+'" onclick="pickSh(this)">'+SH[s].name+'</button>'}).join("")+'</div><input id="nt" placeholder="Term"><textarea id="nd" rows="2" placeholder="Meaning, in your own words"></textarea><button class="btn" onclick="addW()">Add to shelf</button></div>';
- V.innerHTML=h;list()}
-function pickSh(b){[].forEach.call(document.querySelectorAll("#addsel .chip"),function(x){x.classList.remove("on")});b.classList.add("on")}
-function addW(){var t=document.getElementById("nt").value.trim(),d=document.getElementById("nd").value.trim(),s=document.querySelector("#addsel .on").dataset.s;
- if(!t||!d)return;S.custom.push({id:"c"+Date.now(),s:s,t:t,d:d,mine:1});save();vShelves()}
-function list(){
- var l=all().filter(function(w){return(filter==="all"||w.s===filter)&&(w.t+w.d).toLowerCase().indexOf(q.toLowerCase())>-1});
- document.getElementById("L").innerHTML=l.map(function(w){var p=S.prog[w.id];
-  return '<div class="item"><span class="dot" style="background:'+SH[w.s].color+'"></span><b class="serif">'+esc(w.t)+'</b>'+(p&&p.box?'<span class="box">box '+p.box+'</span>':'')+'<div class="def small" style="margin-top:2px">'+esc(w.d)+'</div></div>'}).join("")||'<div class="small">Nothing found.</div>'}
+ var chips=[["all","All"],["soc","Sociology"],["sor","Sorrows"],["cri","Thinking"]].map(function(c){
+  return h("button",{type:"button","class":"chip"+(filter===c[0]?" on":""),"aria-pressed":String(filter===c[0]),on:{click:function(){filter=c[0];vShelves()}}},c[1])});
+ var box=h("div",{class:"card",style:"margin-top:12px"});
+ var inp=h("input",{type:"search",placeholder:"Search","aria-label":"Search words",value:q,on:{input:function(){q=inp.value;fillList(box)}}});
+ var nt=h("input",{type:"text",placeholder:"Term","aria-label":"New term",maxlength:80});
+ var nd=h("textarea",{rows:2,placeholder:"Meaning, in your own words","aria-label":"Meaning",maxlength:400});
+ var sel=SHELVES.map(function(s){return h("button",{type:"button","class":"chip"+(addShelf===s?" on":""),"aria-pressed":String(addShelf===s),on:{click:function(){
+  addShelf=s;sel.forEach(function(b,i){var on=SHELVES[i]===s;b.className="chip"+(on?" on":"");b.setAttribute("aria-pressed",String(on))})}}},SH[s].name)});
+ mount([h("h1",null,"Shelves"),h("p",{class:"sub"},all().length+" entries. Add your own at the bottom."),h("div",{class:"chips"},chips),
+  filter!=="all"?h("p",{class:"sub"},SH[filter].goal):null,inp,box,
+  h("h2",null,"Add your own"),
+  h("div",{class:"card"},h("div",{class:"chips"},sel),nt,nd,btn("Add to shelf","",function(){
+   var t=nt.value.trim(),m=nd.value.trim();if(!t||!m)return;
+   S.custom.push({id:"c"+Date.now(),s:addShelf,t:t.slice(0,80),d:m.slice(0,400),mine:1});save();vShelves()}))]);
+ fillList(box)}
+/* drill */
+function build(m){var l=all(),d=dayN();
+ function isNew(w){var p=S.prog[w.id];return !(p&&p.box)}
+ var due=dueList().sort(function(a,b){return S.prog[a.id].due-S.prog[b.id].due}),fresh=shuffle(l.filter(isNew));
+ if(m==="quick")return due.slice(0,S.goal).concat(fresh).slice(0,S.goal);
+ if(m==="due")return due.slice(0,30);
+ if(m==="new")return fresh.slice(0,10);
+ return shuffle(l.filter(function(w){return w.s===m})).slice(0,10)}
+function startDrill(m){var l=build(m);tab="drill";
+ if(!l.length){drill=null;drillMsg="Nothing to review yet. Save a sentence on Today first.";render();return}
+ drillMsg="";drill={q:l,i:0,ok:0,show:false,checked:false,typed:"",res:null,mode:S.mode};render()}
+function gradeCard(w,ok){var p=pr(w.id);
+ p.box=ok?Math.min(4,p.box+1):1;if(!p.box)p.box=1;p.due=dayN()+BOXGAP[p.box];
+ S.log.push({id:w.id,t:Date.now(),g:ok?1:0,m:drill.mode});if(S.log.length>5000)S.log=S.log.slice(-5000);
+ if(ok)drill.ok++;drill.i++;drill.show=false;drill.checked=false;drill.typed="";drill.res=null;
+ if(drill.i>=drill.q.length)mark();save();render()}
 function vDrill(){
- if(!drill){var due=all().filter(function(w){var p=S.prog[w.id];return p&&p.box>0&&p.due<=dayN()}),fresh=all().filter(function(w){return !(S.prog[w.id]&&S.prog[w.id].box)});
-  var h='<h1>Drill</h1><p class="sub">See the term, recall the meaning, then grade yourself. Right answers come back later, wrong ones tomorrow.</p>';
-  h+='<div class="card"><b class="serif" style="font-size:22px">'+due.length+' due</b><div class="small">Words you have used before and are ready to revisit.</div></div>';
-  h+='<button class="btn" style="width:100%" onclick="start(\'due\')">Review due words</button>';
-  h+='<button class="btn ghost" style="width:100%" onclick="start(\'new\')">Learn 10 new words</button>';
-  ["soc","sor","cri"].forEach(function(s){h+='<button class="btn ghost" style="width:100%" onclick="start(\''+s+'\')">'+SH[s].name+' round</button>'});
-  V.innerHTML=h;return}
+ if(!drill){
+  var seg=["flip","type"].map(function(m){return h("button",{type:"button","class":"chip"+(S.mode===m?" on":""),"aria-pressed":String(S.mode===m),on:{click:function(){S.mode=m;save();vDrill()}}},m==="flip"?"Flip cards":"Type the word")});
+  mount([h("h1",null,"Drill"),h("p",{class:"sub"},"Recall first, then check. Right answers come back later, wrong ones tomorrow."),
+   h("div",{class:"chips"},seg),drillMsg?h("div",{class:"card err",role:"alert"},drillMsg):null,
+   h("div",{class:"card"},h("b",{class:"serif",style:"font-size:22px"},dueList().length+" due"),h("div",{class:"small"},"Words you have used before and are ready to revisit.")),
+   btn("Quick "+S.goal,"",function(){startDrill("quick")}),btn("Review due words","ghost",function(){startDrill("due")}),
+   btn("Learn 10 new words","ghost",function(){startDrill("new")}),
+   SHELVES.map(function(s){return btn(SH[s].name+" round","ghost",function(){startDrill(s)})})]);return}
  var w=drill.q[drill.i];
- if(!w){var h2='<h1>Round done</h1><div class="card"><div class="serif" style="font-size:26px">'+drill.ok+' of '+drill.q.length+' recalled</div><div class="small">Next step: write one sentence for a word you missed.</div></div><button class="btn" style="width:100%" onclick="go(\'drill\')">Back</button>';mark();V.innerHTML=h2;return}
- var h3='<div class="small" style="margin-bottom:10px">'+(drill.i+1)+' / '+drill.q.length+'</div><div class="card flip"><div class="tag '+SH[w.s].tag+'">'+SH[w.s].name+'</div><div class="term" style="font-size:32px">'+esc(w.t)+'</div>';
- h3+=drill.show?'<div class="def">'+esc(w.d)+'</div>':'<div class="small">Say the meaning out loud first.</div>';
- h3+='</div>';
- h3+=drill.show?'<div class="row"><button class="btn ghost" onclick="grade(0)">Missed</button><button class="btn" onclick="grade(1)">Knew it</button></div>':'<button class="btn" style="width:100%" onclick="drill.show=1;vDrill()">Show meaning</button>';
- V.innerHTML=h3}
-function start(m){var l=all();
- if(m==="due")l=l.filter(function(w){var p=S.prog[w.id];return p&&p.box>0&&p.due<=dayN()});
- else if(m==="new")l=l.filter(function(w){return !(S.prog[w.id]&&S.prog[w.id].box)});
- else l=l.filter(function(w){return w.s===m});
- l.sort(function(){return Math.random()-.5});l=l.slice(0,m==="due"?30:10);
- if(!l.length){alert("Nothing to review yet. Save a sentence on Today first.");return}
- drill={q:l,i:0,ok:0,show:0};vDrill()}
-function grade(ok){var w=drill.q[drill.i],p=pr(w.id);
- p.box=ok?Math.min(4,p.box+1):1;if(!p.box)p.box=1;p.due=dayN()+BOXGAP[p.box];if(ok)drill.ok++;save();drill.i++;drill.show=0;vDrill()}
+ if(!w){mount([h("h1",null,"Round done"),h("div",{class:"card"},h("div",{class:"serif",style:"font-size:26px"},drill.ok+" of "+drill.q.length+" recalled"),
+   h("div",{class:"small"},"Streak: "+streak()+" day"+(streak()==1?"":"s")+". Next step: write one sentence for a word you missed.")),
+   btn("Back","",function(){drill=null;render()})]);return}
+ var head=h("div",{class:"small",style:"margin-bottom:10px"},(drill.i+1)+" / "+drill.q.length),tag=h("div",{class:"tag "+SH[w.s].tag},SH[w.s].name);
+ if(drill.mode==="flip"){
+  mount([head,h("div",{class:"card flip"},tag,h("div",{class:"term",style:"font-size:32px"},w.t),
+   drill.show?h("div",{class:"def"},w.d):h("div",{class:"small"},"Say the meaning out loud first.")),
+   drill.show?h("div",{class:"row"},btn("Missed","ghost",function(){gradeCard(w,false)}),btn("Knew it","",function(){gradeCard(w,true)}))
+    :btn("Show meaning","",function(){drill.show=true;vDrill()})]);return}
+ if(!drill.checked){
+  var inp=h("input",{type:"text","aria-label":"Type the term","placeholder":"Type the term",autocomplete:"off",autocapitalize:"none",spellcheck:"false",value:drill.typed});
+  function check(){drill.typed=inp.value;drill.res=norm(inp.value)===norm(w.t);drill.checked=true;vDrill()}
+  inp.addEventListener("keydown",function(e){if(e.key==="Enter")check()});
+  mount([head,h("div",{class:"card"},tag,h("div",{class:"small",style:"margin-top:6px"},"Which term fits this meaning?"),h("div",{class:"def",style:"margin-top:6px"},w.d),inp),btn("Check","",check)]);return}
+ mount([head,h("div",{class:"card flip"},tag,h("div",{class:"term",style:"font-size:32px"},w.t),
+  drill.res?h("div",{class:"done"},"Correct."):h("div",{class:"small"},"You typed: "+(drill.typed||"nothing"))),
+  drill.res?btn("Next","",function(){gradeCard(w,true)}):h("div",{class:"row"},btn("Missed","ghost",function(){gradeCard(w,false)}),btn("Close enough","",function(){gradeCard(w,true)}))])}
 function vLog(){
- var mastered=Object.keys(S.prog).filter(function(k){return S.prog[k].box>=4}).length;
- var h='<h1>Log</h1><p class="sub">Your sentences are the real record.</p><div class="stat"><div><b>'+streak()+'</b><span>Streak</span></div><div><b>'+S.sent.length+'</b><span>Sentences</span></div><div><b>'+mastered+'</b><span>Solid</span></div></div>';
- h+='<h2>Recent sentences</h2><div class="card">';
+ var solid=Object.keys(S.prog).filter(function(k){return S.prog[k].box>=4}).length,m={};all().forEach(function(w){m[w.id]=w});
+ var fileIn=h("input",{type:"file",accept:".json,application/json","aria-label":"Choose backup file",style:"display:none",on:{change:function(){readFile(fileIn.files&&fileIn.files[0]);fileIn.value=""}}});
+ var nodes=[h("h1",null,"Log"),h("p",{class:"sub"},"Your sentences are the real record."),
+  h("div",{class:"stat"},h("div",null,h("b",null,streak()),h("span",null,"Streak")),h("div",null,h("b",null,S.sent.length),h("span",null,"Sentences")),h("div",null,h("b",null,solid),h("span",null,"Solid"))),
+  h("div",{class:"stat"},h("div",null,h("b",null,S.freezes),h("span",null,"Freezes")),h("div",null,h("b",null,S.log.length),h("span",null,"Reviews")),h("div",null,h("b",null,dueList().length),h("span",null,"Due")))];
+ nodes.push(h("div",{class:"card"},h("b",{class:"serif"},"Backup"),
+  h("div",{class:"small"},(S.lastBackup?"Last backup: "+ago(S.lastBackup)+". ":"No backup yet. ")+(S.persisted===true?"Storage is protected.":standalone()?"Storage is not guaranteed, so back up often.":"Open from the Home Screen to protect storage.")),
+  btn("Export backup","",exportData),btn("Import backup","ghost",function(){fileIn.click()}),fileIn,
+  Store.read(SNAP)?btn("Undo last import","ghost",undoImport):null));
+ if(impErr)nodes.push(h("div",{class:"card err",role:"alert"},impErr));
+ if(pending){var lastRev=pending.log.length?Math.max.apply(null,pending.log.map(function(r){return r.t})):0;
+  nodes.push(h("div",{class:"card"},h("b",{class:"serif"},"Import preview"),
+   h("div",{class:"small"},pending.sent.length+" sentences, "+pending.log.length+" reviews, "+pending.custom.length+" of your own words. Exported "+pendingMeta+(lastRev?", last reviewed "+ago(lastRev):"")+"."),
+   h("div",{class:"row"},btn("Merge","",function(){applyImport("merge")}),btn("Replace","ghost",function(){if(confirm("Replace everything here with this backup? Your current data is saved so you can undo."))applyImport("replace")})),
+   btn("Cancel","ghost",function(){pending=null;render()})))}
+ nodes.push(h("h2",null,"Recent sentences"));
  var r=S.sent.slice().reverse().slice(0,40);
- var m={};all().forEach(function(w){m[w.id]=w});
- h+=r.map(function(x){var w=m[x.id];return '<div class="item"><span class="tag '+SH[x.s].tag+'">'+esc(w?w.t:"")+'</span><div style="margin-top:2px">'+esc(x.text)+'</div><div class="small">'+x.day+'</div></div>'}).join("")||'<div class="small">No sentences yet.</div>';
- h+='</div><div class="row"><button class="btn ghost" onclick="exp()">Export backup</button><button class="btn ghost" onclick="reset()">Reset</button></div>';
- V.innerHTML=h}
-function exp(){var b=new Blob([JSON.stringify(S,null,1)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="lexis-backup.json";a.click()}
-function reset(){if(confirm("Erase all progress and custom words?")){localStorage.removeItem("lexis");S=load();render()}}
-render();
+ nodes.push(h("div",{class:"card"},r.length?r.map(function(x){var w=m[x.id];
+  return h("div",{class:"item"},h("span",{class:"tag "+SH[x.s].tag},w?w.t:""),h("div",{style:"margin-top:2px"},x.text),h("div",{class:"small"},x.day))}):h("div",{class:"small"},"No sentences yet.")));
+ nodes.push(h("div",{class:"zone"},h("div",{class:"small"},"Danger zone"),btn("Erase everything","danger",function(){
+  if(confirm("Erase all progress, sentences and your own words? Export a backup first.")){Store.drop(KEY);Store.drop(SNAP);S=fill({});render()}})));
+ mount(nodes)}
+/* boot */
+rollover();protect();render();
+if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
 </script>
 </body>
 </html>
