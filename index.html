@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lexis">
+<meta name="theme-color" content="#0f0e0c">
+<title>Lexis</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%230f0e0c'/%3E%3Ctext x='90' y='122' font-size='96' text-anchor='middle' fill='%23d9b26f' font-family='Georgia,serif' font-style='italic'%3EL%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#0f0e0c;--card:#191714;--line:#2a2621;--ink:#ece6da;--mute:#8f887b;--gold:#d9b26f;--soc:#7fb0a0;--sor:#c98f9a;--cri:#d9b26f;--r:16px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;font-size:16px;line-height:1.45}
+.serif{font-family:Georgia,"Iowan Old Style",serif}
+#app{max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column}
+main{flex:1;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 18px) 18px 24px;-webkit-overflow-scrolling:touch}
+nav{display:flex;border-top:1px solid var(--line);background:var(--bg);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--mute);padding:12px 0 10px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+nav button.on{color:var(--gold)}
+h1{font-family:Georgia,serif;font-weight:400;font-size:30px;margin:0 0 2px}
+h2{font-family:Georgia,serif;font-weight:400;font-size:22px;margin:22px 0 8px}
+.sub{color:var(--mute);font-size:14px;margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.t-soc{color:var(--soc)}.t-sor{color:var(--sor)}.t-cri{color:var(--cri)}
+.term{font-family:Georgia,serif;font-size:26px;margin:4px 0 6px}
+.def{color:#cfc8ba}
+.use{color:var(--mute);font-size:14px;margin-top:10px;border-left:2px solid var(--line);padding-left:10px}
+textarea,input{width:100%;background:#12110f;border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px;font-size:16px;font-family:inherit;margin-top:10px;resize:none}
+textarea:focus,input:focus{outline:1px solid var(--gold)}
+.btn{background:var(--gold);color:#17130b;border:0;border-radius:12px;padding:12px 16px;font-weight:600;font-size:15px;margin-top:10px}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px}
+.chip{flex:none;border:1px solid var(--line);background:none;color:var(--mute);border-radius:99px;padding:7px 14px;font-size:14px}
+.chip.on{color:var(--ink);border-color:var(--gold)}
+.stat{display:flex;gap:10px}.stat>div{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px;text-align:center}
+.stat b{display:block;font-family:Georgia,serif;font-size:26px;font-weight:400}
+.stat span{font-size:11px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
+.item{padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border:0}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--line)}
+.box{display:inline-block;min-width:18px;text-align:center;font-size:11px;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:1px 5px;margin-left:6px}
+.done{color:var(--soc);font-size:14px;margin-top:8px}
+.flip{min-height:230px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.small{font-size:13px;color:var(--mute)}
+a{color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="app"><main id="v"></main>
+<nav id="nav"></nav></div>
+<script>
+/* ---------- DATA: original glosses, written for this app ---------- */
+var SH={
+ soc:{name:"Sociology",tag:"t-soc",color:"#7fb0a0",goal:"Builds the vocabulary for your Tsukuba research proposal on the 18th Amendment.",
+  prompt:"Use it on Pakistan: devolution, provinces, Balochistan, the centre."},
+ sor:{name:"Obscure Sorrows",tag:"t-sor",color:"#c98f9a",goal:"Names feelings people can't name. Raw material for Philo Sapiens hooks.",
+  prompt:"Drop it into one concrete scene. Name the concept, then show the room."},
+ cri:{name:"Critical Thinking",tag:"t-cri",color:"#d9b26f",goal:"Catches flawed reasoning in your trades, your content and other people's claims.",
+  prompt:"Catch it once in your own thinking today: a trade, a claim, a reel."}
+};
+var W=[
+/* sociology */
+["soc","Social stratification","How a society ranks people into layers by wealth, power or status, and how those layers tend to be inherited."],
+["soc","Anomie","A state where the shared rules stop guiding behaviour, so people feel unmoored and norms lose their grip."],
+["soc","Habitus","Durable habits of taste, speech and posture absorbed from your background that quietly shape what feels natural to you."],
+["soc","Cultural capital","Knowledge, manners and credentials that signal belonging and convert into advantage."],
+["soc","Social capital","The value held in relationships and networks: who will pick up the phone for you."],
+["soc","Hegemony","Rule that works mostly through consent and common sense rather than force."],
+["soc","Structure vs agency","The question of how much people shape their lives versus how much the system shapes them."],
+["soc","Patron-client relations","Exchange of loyalty and votes for protection and favours, common where formal institutions are weak."],
+["soc","Legitimacy","The widely held belief that an authority has the right to rule."],
+["soc","Institutions","Stable rules and organisations, formal or informal, that structure how people interact."],
+["soc","Devolution","Moving powers and resources from a central government down to regional ones."],
+["soc","Centre-periphery","The pattern where a core region holds power and resources and outlying regions depend on it."],
+["soc","State capacity","What a state can actually do: collect, deliver, enforce, not just what its laws say."],
+["soc","Collective action problem","Everyone gains if the group cooperates, yet each person has reasons to hold back."],
+["soc","Social construction","An idea that feels natural but exists because people keep agreeing to treat it as real."],
+["soc","Ethnic boundary","The line a group draws, or has drawn around it, that decides who counts as us."],
+["soc","Deviance","Behaviour that breaks a group's norms, defined by the group rather than by the act itself."],
+["soc","Latent function","An unintended, often unnoticed effect an institution has beyond its stated purpose."],
+["soc","Reference group","The people you measure yourself against, whether or not you know them."],
+["soc","Path dependence","Early choices lock in later options, so history keeps steering the present."],
+/* obscure sorrows */
+["sor","Sonder","The jolt of realising a stranger passing by has a life as dense and unfinished as yours."],
+["sor","Opia","The odd intensity of holding eye contact, intimate and slightly invasive at once."],
+["sor","Kenopsia","The eerie emptiness of a place that is usually busy, now quiet."],
+["sor","Vellichor","The wistful pull of a secondhand bookshop, full of lives half-read."],
+["sor","Monachopsis","A faint, persistent feeling of not quite belonging where you are."],
+["sor","Liberosis","Wishing you cared less about things, the exhausting weight of caring."],
+["sor","Sillage","The trace a person leaves in a room after they go."],
+["sor","Rubatosis","Becoming suddenly aware of your own heartbeat."],
+["sor","Zenosyne","The feeling that time is speeding up as you get older."],
+["sor","Anecdoche","A conversation where everyone talks and nobody listens."],
+["sor","Énouement","Knowing the future now and being unable to tell your past self."],
+["sor","Exulansis","Giving up on explaining an experience because people can't relate."],
+["sor","Jouska","A conversation you rehearse in your head with someone who isn't there."],
+["sor","Nodus tollens","Realising the plot of your life no longer makes sense to you."],
+["sor","Occhiolism","Awareness of how small and distorted your own point of view is."],
+["sor","Lachesism","The odd wish for a disaster, so something would finally happen."],
+["sor","Chrysalism","The calm of being indoors during a storm."],
+["sor","Adronitis","Frustration at how long it takes to know someone well."],
+["sor","Ellipsism","Sadness that you will never see how the story turns out."],
+["sor","Mauerbauertraurigkeit","The urge to push people away even when you want them close."],
+/* critical thinking */
+["cri","Confirmation bias","Seeking and favouring evidence that fits what you already believe."],
+["cri","Steelmanning","Arguing against the strongest version of a view, not the weakest."],
+["cri","Burden of proof","Whoever makes the claim owes the evidence, not the doubter."],
+["cri","Base rate neglect","Ignoring how common something is overall because a vivid detail grabbed you."],
+["cri","Survivorship bias","Judging by the winners you can see while the losers stay hidden."],
+["cri","Sunk cost fallacy","Continuing because of what you already spent, not what comes next."],
+["cri","Anchoring","Letting the first number you hear pull every later judgement toward it."],
+["cri","Post hoc fallacy","Assuming B was caused by A just because B came after A."],
+["cri","Motivated reasoning","Working backward from the conclusion you want."],
+["cri","Equivocation","Sliding between two meanings of one word inside an argument."],
+["cri","Begging the question","Using the conclusion as a hidden premise."],
+["cri","Goodhart's law","When a measure becomes a target, it stops measuring well."],
+["cri","Chesterton's fence","Learn why a rule exists before tearing it down."],
+["cri","Motte and bailey","Defending a bold claim by retreating to a modest one when challenged."],
+["cri","Availability heuristic","Judging likelihood by how easily examples come to mind."],
+["cri","Falsifiability","A claim is only meaningful if some observation could prove it wrong."],
+["cri","Hasty generalisation","Drawing a broad rule from too few cases."],
+["cri","Appeal to authority","Treating a claim as true because of who said it, not why."],
+["cri","Simpson's paradox","A trend in each group reverses when the groups are merged."],
+["cri","Outcome bias","Judging a decision by how it turned out rather than how it was made."]
+];
+var BOXGAP=[0,1,2,4,8]; // days per Leitner box
+/* ---------- STATE ---------- */
+var S=load();
+function load(){try{var s=JSON.parse(localStorage.getItem("lexis")||"null");if(s)return s}catch(e){}
+ return {prog:{},sent:[],custom:[],days:{},ver:1}}
+function save(){try{localStorage.setItem("lexis",JSON.stringify(S))}catch(e){}}
+function all(){return W.map(function(w,i){return {id:"w"+i,s:w[0],t:w[1],d:w[2]}}).concat(S.custom)}
+function today(){var d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+function dayN(){return Math.floor(Date.now()/864e5)}
+function pr(id){return S.prog[id]||(S.prog[id]={box:0,due:0,seen:0})}
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+/* daily pick: first unseen word of each shelf in order, stays fixed for the day */
+function daily(s){
+ var k="pick_"+s,t=today();S.daily=S.daily||{};
+ if(S.daily[k]&&S.daily[k].t===t)return all().filter(function(w){return w.id===S.daily[k].id})[0];
+ var l=all().filter(function(w){return w.s===s});
+ l.sort(function(a,b){return pr(a.id).seen-pr(b.id).seen});
+ var w=l[0];S.daily[k]={t:t,id:w.id};pr(w.id).seen++;save();return w}
+function streak(){var d=dayN(),n=0;
+ if(!S.days[d])d--;
+ while(S.days[d]){n++;d--}return n}
+function mark(){S.days[dayN()]=1;save()}
+/* ---------- VIEWS ---------- */
+var tab="today",filter="all",q="",drill=null;
+var V=document.getElementById("v");
+function nav(){var T=[["today","Today"],["shelves","Shelves"],["drill","Drill"],["log","Log"]];
+ document.getElementById("nav").innerHTML=T.map(function(t){return '<button class="'+(tab===t[0]?"on":"")+'" onclick="go(\''+t[0]+'\')">'+t[1]+'</button>'}).join("")}
+function go(t){tab=t;drill=null;render()}
+function render(){nav();V.scrollTop=0;({today:vToday,shelves:vShelves,drill:vDrill,log:vLog})[tab]()}
+function vToday(){
+ var h='<h1>Lexis</h1><p class="sub">One word per shelf. Use each in a sentence. That is the whole habit.</p>';
+ var done=0;
+ ["soc","sor","cri"].forEach(function(s){
+  var w=daily(s),got=S.sent.filter(function(x){return x.id===w.id&&x.day===today()})[0];if(got)done++;
+  h+='<div class="card"><div class="tag '+SH[s].tag+'">'+SH[s].name+'</div><div class="term">'+esc(w.t)+'</div><div class="def">'+esc(w.d)+'</div><div class="use">'+SH[s].prompt+'</div>'+
+  (got?'<div class="done">Used: <i>'+esc(got.text)+'</i></div>':'<textarea id="ta_'+s+'" rows="2" placeholder="Write your own sentence"></textarea><button class="btn" onclick="useIt(\''+s+'\',\''+w.id+'\')">Save sentence</button>')+'</div>'});
+ if(done===3){mark();h+='<div class="card"><b class="serif">Done for today.</b><div class="small">Streak: '+streak()+' day'+(streak()==1?'':'s')+'. Next step: run one Drill round.</div></div>'}
+ V.innerHTML=h}
+function useIt(s,id){var t=document.getElementById("ta_"+s).value.trim();if(t.split(/\s+/).length<4){alert("Write a full sentence, at least 4 words.");return}
+ S.sent.push({id:id,s:s,text:t,day:today(),n:Date.now()});var p=pr(id);if(p.box<1)p.box=1;p.due=dayN()+BOXGAP[p.box];save();render()}
+function vShelves(){
+ var h='<h1>Shelves</h1><p class="sub">'+all().length+' entries. Add your own at the bottom.</p><div class="chips">';
+ [["all","All"],["soc","Sociology"],["sor","Sorrows"],["cri","Thinking"]].forEach(function(c){h+='<button class="chip '+(filter===c[0]?"on":"")+'" onclick="filter=\''+c[0]+'\';vShelves()">'+c[1]+'</button>'});
+ h+='</div>';
+ if(filter!=="all")h+='<p class="sub">'+SH[filter].goal+'</p>';
+ h+='<input id="q" placeholder="Search" value="'+esc(q)+'" oninput="q=this.value;list()"><div id="L" class="card" style="margin-top:12px"></div>';
+ h+='<h2>Add your own</h2><div class="card"><div class="chips" id="addsel">'+["soc","sor","cri"].map(function(s,i){return '<button class="chip '+(i?'':'on')+'" data-s="'+s+'" onclick="pickSh(this)">'+SH[s].name+'</button>'}).join("")+'</div><input id="nt" placeholder="Term"><textarea id="nd" rows="2" placeholder="Meaning, in your own words"></textarea><button class="btn" onclick="addW()">Add to shelf</button></div>';
+ V.innerHTML=h;list()}
+function pickSh(b){[].forEach.call(document.querySelectorAll("#addsel .chip"),function(x){x.classList.remove("on")});b.classList.add("on")}
+function addW(){var t=document.getElementById("nt").value.trim(),d=document.getElementById("nd").value.trim(),s=document.querySelector("#addsel .on").dataset.s;
+ if(!t||!d)return;S.custom.push({id:"c"+Date.now(),s:s,t:t,d:d,mine:1});save();vShelves()}
+function list(){
+ var l=all().filter(function(w){return(filter==="all"||w.s===filter)&&(w.t+w.d).toLowerCase().indexOf(q.toLowerCase())>-1});
+ document.getElementById("L").innerHTML=l.map(function(w){var p=S.prog[w.id];
+  return '<div class="item"><span class="dot" style="background:'+SH[w.s].color+'"></span><b class="serif">'+esc(w.t)+'</b>'+(p&&p.box?'<span class="box">box '+p.box+'</span>':'')+'<div class="def small" style="margin-top:2px">'+esc(w.d)+'</div></div>'}).join("")||'<div class="small">Nothing found.</div>'}
+function vDrill(){
+ if(!drill){var due=all().filter(function(w){var p=S.prog[w.id];return p&&p.box>0&&p.due<=dayN()}),fresh=all().filter(function(w){return !(S.prog[w.id]&&S.prog[w.id].box)});
+  var h='<h1>Drill</h1><p class="sub">See the term, recall the meaning, then grade yourself. Right answers come back later, wrong ones tomorrow.</p>';
+  h+='<div class="card"><b class="serif" style="font-size:22px">'+due.length+' due</b><div class="small">Words you have used before and are ready to revisit.</div></div>';
+  h+='<button class="btn" style="width:100%" onclick="start(\'due\')">Review due words</button>';
+  h+='<button class="btn ghost" style="width:100%" onclick="start(\'new\')">Learn 10 new words</button>';
+  ["soc","sor","cri"].forEach(function(s){h+='<button class="btn ghost" style="width:100%" onclick="start(\''+s+'\')">'+SH[s].name+' round</button>'});
+  V.innerHTML=h;return}
+ var w=drill.q[drill.i];
+ if(!w){var h2='<h1>Round done</h1><div class="card"><div class="serif" style="font-size:26px">'+drill.ok+' of '+drill.q.length+' recalled</div><div class="small">Next step: write one sentence for a word you missed.</div></div><button class="btn" style="width:100%" onclick="go(\'drill\')">Back</button>';mark();V.innerHTML=h2;return}
+ var h3='<div class="small" style="margin-bottom:10px">'+(drill.i+1)+' / '+drill.q.length+'</div><div class="card flip"><div class="tag '+SH[w.s].tag+'">'+SH[w.s].name+'</div><div class="term" style="font-size:32px">'+esc(w.t)+'</div>';
+ h3+=drill.show?'<div class="def">'+esc(w.d)+'</div>':'<div class="small">Say the meaning out loud first.</div>';
+ h3+='</div>';
+ h3+=drill.show?'<div class="row"><button class="btn ghost" onclick="grade(0)">Missed</button><button class="btn" onclick="grade(1)">Knew it</button></div>':'<button class="btn" style="width:100%" onclick="drill.show=1;vDrill()">Show meaning</button>';
+ V.innerHTML=h3}
+function start(m){var l=all();
+ if(m==="due")l=l.filter(function(w){var p=S.prog[w.id];return p&&p.box>0&&p.due<=dayN()});
+ else if(m==="new")l=l.filter(function(w){return !(S.prog[w.id]&&S.prog[w.id].box)});
+ else l=l.filter(function(w){return w.s===m});
+ l.sort(function(){return Math.random()-.5});l=l.slice(0,m==="due"?30:10);
+ if(!l.length){alert("Nothing to review yet. Save a sentence on Today first.");return}
+ drill={q:l,i:0,ok:0,show:0};vDrill()}
+function grade(ok){var w=drill.q[drill.i],p=pr(w.id);
+ p.box=ok?Math.min(4,p.box+1):1;if(!p.box)p.box=1;p.due=dayN()+BOXGAP[p.box];if(ok)drill.ok++;save();drill.i++;drill.show=0;vDrill()}
+function vLog(){
+ var mastered=Object.keys(S.prog).filter(function(k){return S.prog[k].box>=4}).length;
+ var h='<h1>Log</h1><p class="sub">Your sentences are the real record.</p><div class="stat"><div><b>'+streak()+'</b><span>Streak</span></div><div><b>'+S.sent.length+'</b><span>Sentences</span></div><div><b>'+mastered+'</b><span>Solid</span></div></div>';
+ h+='<h2>Recent sentences</h2><div class="card">';
+ var r=S.sent.slice().reverse().slice(0,40);
+ var m={};all().forEach(function(w){m[w.id]=w});
+ h+=r.map(function(x){var w=m[x.id];return '<div class="item"><span class="tag '+SH[x.s].tag+'">'+esc(w?w.t:"")+'</span><div style="margin-top:2px">'+esc(x.text)+'</div><div class="small">'+x.day+'</div></div>'}).join("")||'<div class="small">No sentences yet.</div>';
+ h+='</div><div class="row"><button class="btn ghost" onclick="exp()">Export backup</button><button class="btn ghost" onclick="reset()">Reset</button></div>';
+ V.innerHTML=h}
+function exp(){var b=new Blob([JSON.stringify(S,null,1)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="lexis-backup.json";a.click()}
+function reset(){if(confirm("Erase all progress and custom words?")){localStorage.removeItem("lexis");S=load();render()}}
+render();
+</script>
+</body>
+</html>
