@@ -1,5 +1,5 @@
-var CACHE="lexis-v3";
-var SHELL=["./","index.html","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png"];
+var CACHE="lexis-v4";
+var SHELL=["./","index.html","manifest.webmanifest","words.js","icon-180.png","icon-192.png","icon-512.png"];
 self.addEventListener("install",function(e){
  e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(SHELL)}).then(function(){return self.skipWaiting()}));
 });
