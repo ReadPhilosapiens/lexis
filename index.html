@@ -187,12 +187,13 @@ html[data-style=minimal] .sw button{border-radius:2px;border:1px solid var(--lin
 <body>
 <div id="app"><main id="v"></main>
 <nav id="nav" aria-label="Sections"></nav></div>
+<script src="words.js"></script>
 <script>
 /* ---------- DATA: original glosses, written for this app ---------- */
 var SH={
  soc:{name:"Sociology",tag:"t-soc",color:"#7fb0a0",goal:"Builds the vocabulary for your Tsukuba research proposal on the 18th Amendment.",
   prompt:"Use it on Pakistan: devolution, provinces, Balochistan, the centre."},
- sor:{name:"Obscure Sorrows",tag:"t-sor",color:"#c98f9a",goal:"Names feelings people can't name. Raw material for Philo Sapiens hooks.",
+ sor:{name:"Obscure Sorrows",tag:"t-sor",color:"#c98f9a",goal:"Names feelings people can't name: Koenig's coined words plus feeling-words from Urdu, Turkish, German, Japanese and more. Raw material for Philo Sapiens hooks.",
   prompt:"Drop it into one concrete scene. Name the concept, then show the room."},
  cri:{name:"Critical Thinking",tag:"t-cri",color:"#d9b26f",goal:"Catches flawed reasoning in your trades, your content and other people's claims.",
   prompt:"Catch it once in your own thinking today: a trade, a claim, a reel."}
@@ -263,6 +264,7 @@ var W=[
 ["cri","Simpson's paradox","A trend in each group reverses when the groups are merged."],
 ["cri","Outcome bias","Judging a decision by how it turned out rather than how it was made."]
 ];
+if(typeof WX!=="undefined"&&Array.isArray(WX))W=W.concat(WX); // 300 more per shelf, ids continue from w60
 var BOXGAP=[0,1,2,4,8]; // days per Leitner box
 var STY={ink:["Ink","Calm dark, gentle rise","#0f0e0c","#191714","#d9b26f"],
  minimal:["Minimal","Whitespace, hairlines, a quiet fade","#fafaf8","#ffffff","#e2e2dd"],
@@ -406,9 +408,11 @@ function fillList(box){
  var l=all().filter(function(w){return(filter==="all"||w.s===filter)&&(w.t+" "+w.d).toLowerCase().indexOf(q.toLowerCase())>-1});
  box.textContent="";
  if(!l.length){box.appendChild(h("div",{class:"small"},"Nothing found."));return}
+ var total=l.length;l=l.slice(0,120);
  l.forEach(function(w){var p=S.prog[w.id];
   box.appendChild(h("div",{class:"item"},h("span",{class:"dot",style:"background:"+SH[w.s].color}),h("b",{class:"serif"},w.t),
-   p&&p.box?h("span",{class:"box"},"box "+p.box):null,h("div",{class:"def small",style:"margin-top:2px"},w.d)))})}
+   p&&p.box?h("span",{class:"box"},"box "+p.box):null,h("div",{class:"def small",style:"margin-top:2px"},w.d)))});
+ if(total>l.length)box.appendChild(h("div",{class:"small",style:"padding-top:12px"},"Showing the first "+l.length+" of "+total+". Search or pick a shelf to narrow it."))}
 function vShelves(){
  var chips=[["all","All"],["soc","Sociology"],["sor","Sorrows"],["cri","Thinking"]].map(function(c){
   return h("button",{type:"button","class":"chip"+(filter===c[0]?" on":""),"aria-pressed":String(filter===c[0]),on:{click:function(){filter=c[0];vShelves()}}},c[1])});
